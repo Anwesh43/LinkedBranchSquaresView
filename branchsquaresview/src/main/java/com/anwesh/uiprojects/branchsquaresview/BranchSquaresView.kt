@@ -22,6 +22,7 @@ val sizeFactor : Float = 2.9f
 val foreColor : Int = Color.parseColor("#673AB7")
 val backColor : Int = Color.parseColor("#BDBDBD")
 val rSizeFactor : Int = 2
+val delay : Long = 20
 
 fun Int.inverse() : Float = 1f / this
 fun Float.maxScale(i : Int, n : Int) : Float = Math.max(0f, this - i * n.inverse())
@@ -29,7 +30,7 @@ fun Float.divideScale(i : Int, n : Int) : Float = Math.min(n.inverse(), maxScale
 fun Float.scaleFactor() : Float = Math.floor(this / scDiv).toFloat()
 fun Float.mirrorValue(a : Int, b : Int) : Float = (1 - scaleFactor()) * a.inverse() + scaleFactor() * b.inverse()
 fun Float.updateValue(dir : Float, a : Int, b : Int) : Float = mirrorValue(a, b) * dir * scGap
-fun Int.sf() : Float = 1f - 2 * this
+fun Int.sf() : Float = 1f - 2 * (this % 2)
 
 fun Canvas.drawBSNode(i : Int, scale : Float, paint : Paint) {
     val w : Float = width.toFloat()
@@ -49,10 +50,12 @@ fun Canvas.drawBSNode(i : Int, scale : Float, paint : Paint) {
     drawLine(-size, 0f, size, 0f, paint)
     for (j in (0..(rects - 1))) {
         val sc : Float = sc1.divideScale(j, rects)
-        val rectSize : Float = rSize * 0.5f * sc
+        val scj1 : Float = sc.divideScale(0, 2)
+        val scj2 : Float = sc.divideScale(1, 2)
+        val rectSize : Float = rSize * 0.5f * scj2
         save()
         translate(-size + xGap * j, 0f)
-        drawLine(0f, 0f, 0f, size * sc, paint)
+        drawLine(0f, 0f, 0f, size * scj1, paint)
         save()
         translate(0f, size)
         drawRect(RectF(-rectSize, -rectSize, rectSize, rectSize), paint)
@@ -106,7 +109,7 @@ class BranchSquaresView(ctx : Context) : View(ctx) {
             if (animated) {
                 cb()
                 try {
-                    Thread.sleep(50)
+                    Thread.sleep(delay)
                     view.invalidate()
                 } catch(ex : Exception) {
 
