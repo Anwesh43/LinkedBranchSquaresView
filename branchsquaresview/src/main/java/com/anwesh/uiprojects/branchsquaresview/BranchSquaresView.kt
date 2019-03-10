@@ -193,4 +193,26 @@ class BranchSquaresView(ctx : Context) : View(ctx) {
             curr.startUpdating(cb)
         }
     }
+
+    data class Renderer(var view : BranchSquaresView) {
+
+        private val animator : Animator = Animator(view)
+        private val bs : BranchSquares = BranchSquares(0)
+
+        fun render(canvas : Canvas, paint : Paint) {
+            canvas.drawColor(backColor)
+            bs.draw(canvas, paint)
+            animator.animate {
+                bs.update {i, scl ->
+                    animator.stop()
+                }
+            }
+        }
+
+        fun handleTap() {
+            bs.startUpdating {
+                animator.start()
+            }
+        }
+    }
 }
