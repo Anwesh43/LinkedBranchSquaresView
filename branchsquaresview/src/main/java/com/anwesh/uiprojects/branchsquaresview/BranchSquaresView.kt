@@ -216,4 +216,13 @@ class BranchSquaresView(ctx : Context) : View(ctx) {
             }
         }
     }
+
+    companion object {
+
+        fun create(activity : Activity) : BranchSquaresView {
+            val view : BranchSquaresView = BranchSquaresView(activity)
+            activity.setContentView(view)
+            return view
+        }
+    }
 }
